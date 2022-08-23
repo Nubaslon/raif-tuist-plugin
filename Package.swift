@@ -9,6 +9,7 @@ let package = Package(
     products: [
         .executable(name: "tuist-cli", targets: ["CLI"]),
         .executable(name: "tuist-ci", targets: ["CI"]),
+        .library(name: "RunShell", targets: ["RunShell"])
     ],
     dependencies: [
         // Dependencies declare other packages that this package depends on.
