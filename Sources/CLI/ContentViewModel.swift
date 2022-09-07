@@ -145,7 +145,7 @@ class ContentViewModel: ObservableObject {
     
     func checkout(pod: PodDependecy, to destination: CheckoutType) throws {
         if !FileManager.default.fileExists(atPath: pod.localRepoPath + "/.git") {            
-            let specPath = try shell("bundle exec pod spec which \(pod.name) --show-all | grep raiffeisen | head -1 | xargs echo -n")
+            let specPath = try shell("bundle exec pod spec which --regex ^\(pod.name)$ --show-all | grep raiffeisen | head -1 | xargs echo -n")
             let gitURL = try shell("ruby -rcocoapods -e 'puts (eval File.read(\"\(specPath)\")).source[:git]'").trimmingCharacters(in: .newlines)
             try shell("/usr/bin/git clone \(gitURL) \(pod.localRepoPath)")
         } else {
