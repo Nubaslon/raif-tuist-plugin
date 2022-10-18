@@ -106,7 +106,7 @@ class ContentViewModel: ObservableObject {
                 }
                 try shell("rm -Rf _Prebuild")
                 try shell("rm -Rf _Prebuild_delta")
-                try shell("rm ~/Library/Developer/Xcode/DerivedData/ModuleCache.noindex")
+                try? shell("rm -Rf ~/Library/Developer/Xcode/DerivedData/ModuleCache.noindex")
                 try shell("rm -Rf Pods")
                 if (try? shell("bundle check")) == nil {
                     try shell("bundle install")
