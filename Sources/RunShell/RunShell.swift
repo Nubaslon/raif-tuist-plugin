@@ -31,7 +31,7 @@ public func shell(_ command: String, print: Bool = true, shell: String? = defaul
     }
     let task = Process()
     let pipe = Pipe()
-
+    
     let fileManager = FileManager.default
     var sourceRC = ""
     if runShell == "/bin/bash" {
@@ -52,18 +52,22 @@ public func shell(_ command: String, print: Bool = true, shell: String? = defaul
     task.environment = ["HOME": homeDirURL.path]
     task.currentDirectoryURL = URL(fileURLWithPath: FileManager.default.currentDirectoryPath)
     
+    let simaphore = DispatchSemaphore(value: 0)
     var result = ""
-    NotificationCenter.default.addObserver(forName: NSNotification.Name.NSFileHandleDataAvailable, object: pipe.fileHandleForReading , queue: nil) { notification in
+    pipe.fileHandleForReading.readabilityHandler = { _ in
         let output = pipe.fileHandleForReading.availableData
         let outputString = String(data: output, encoding: String.Encoding.utf8) ?? ""
         Swift.print(outputString, terminator: "")
+        fflush(__stdoutp)
         result += outputString
-        pipe.fileHandleForReading.waitForDataInBackgroundAndNotify()
     }
-
-    pipe.fileHandleForReading.waitForDataInBackgroundAndNotify()
+    task.terminationHandler = { process in
+        if !process.isRunning {
+            simaphore.signal()
+        }
+    }
     task.launch()
-    task.waitUntilExit()
+    simaphore.wait()
     
     guard task.terminationStatus == 0 else {
         throw Terminate.status(task.terminationStatus)

@@ -128,13 +128,18 @@ class ContentViewModel: ObservableObject {
                 }
                 try shell("open RMobile.xcworkspace")
             } catch {
+                fflush(__stdoutp)
                 try! FileHandle.standardOutput.write(contentsOf: "Fatal error".data(using: .utf8)!)
                 print("Fatal error")
                 print(error.localizedDescription)
+                fflush(__stdoutp)
+                DispatchQueue.main.async {
+                    NSApplication.shared.terminate(nil)
+                }                
+            }
+            DispatchQueue.main.async {
                 NSApplication.shared.terminate(nil)
             }
-            
-            NSApplication.shared.terminate(nil)
         }
     }
     
