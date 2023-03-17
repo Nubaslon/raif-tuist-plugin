@@ -107,7 +107,7 @@ class ContentViewModel: ObservableObject {
                 try shell("rm -Rf _Prebuild")
                 try shell("rm -Rf _Prebuild_delta")
                 try shell("rm -Rf Pods")
-                try? shell("rm -Rf ~/Library/Developer/Xcode/DerivedData")
+                try? shell("rm -Rf ~/Library/Developer/Xcode/DerivedData/*")
                 if (try? shell("bundle check")) == nil {
                     try shell("bundle install")
                 }
