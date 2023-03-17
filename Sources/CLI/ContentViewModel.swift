@@ -40,7 +40,7 @@ class ContentViewModel: ObservableObject {
             )
             
             // Create A NSRegularExpression
-            let capturePattern = #"pod_constructor :name => '([a-zA-Z0-9\.]*)',((?!pod_constructor).)*:dev_pod => (false|true)"#
+            let capturePattern = #"pod_constructor :name => '([a-zA-Z0-9\.\/]*)',((?!pod_constructor).)*:dev_pod => (false|true)"#
             let captureRegex = try! NSRegularExpression(
                 pattern: capturePattern,
                 options: [.caseInsensitive, .dotMatchesLineSeparators]
