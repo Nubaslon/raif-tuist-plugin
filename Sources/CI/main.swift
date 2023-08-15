@@ -11,12 +11,8 @@ import RunShell
 setbuf(__stdoutp, nil)
 do {
     let needsPodInstall = (try? shell("diff Podfile.lock Pods/Manifest.lock")) == nil
-    let tok = ProcessInfo.processInfo.environment["CI_JOB_TOKEN"]
-//    if !FileManager.default.fileExists(atPath: "./scripts/generator") {
-//        try? shell("git clone https://gitlab-ci-token:\(tok)@gitlabci.raiffeisen.ru/mobile_development/ios-kit/ios-flagship.git")
-//        try? shell("cp ./ios-flagship/Sources/generator scripts")
-//        try? shell("rm -rf ios-flagship")
-//    }
+
+    // Могут быть проблемы с авторизацией при доступе к artifactory. Возможно, потребуется вынести в .gitlab-ci.yaml
     if (try? shell("CI_PIPELINE=TRUE bundle check")) == nil {
         try shell("CI_PIPELINE=TRUE bundle install")
     }
@@ -27,7 +23,7 @@ do {
             (try? shell("CI_PIPELINE=TRUE bundle exec pod repo-art list | grep cocoapods-art")) == nil ||
             !FileManager.default.fileExists(atPath: "\(homeDirURL.path)/.cocoapods/repos-art/cocoapods-art/.artpodrc")
         ) {
-            try? shell("CI_PIPELINE=TRUE bundle exec pod repo-art remove cocoapods-art")
+            _ = try? shell("CI_PIPELINE=TRUE bundle exec pod repo-art remove cocoapods-art")
             try shell("CI_PIPELINE=TRUE bundle exec pod repo-art add cocoapods-art \"https://artifactory.raiffeisen.ru/artifactory/api/pods/cocoapods\"")
         } else {
             let artifactoryUpdateTime = fileModificationDate(path: "\(homeDirURL.path)/.cocoapods/repos-art/cocoapods-art")
@@ -36,20 +32,15 @@ do {
                 print("Artifactory needs to be updates: \(artifactoryUpdateTime)")
                 try shell("CI_PIPELINE=TRUE bundle exec pod repo-art update cocoapods-art")
             } else {
-                print("Artifactory already updated: \(artifactoryUpdateTime)")
+                print("Artifactory already updated: \(String(describing: artifactoryUpdateTime))")
             }
         }
     }
-            
-//    try shell("./scripts/generator -e _Prebuild")
+
     try shell("tuist generate -n")
-    if needsPodInstall {
-        try shell("CI_JOB_TOKEN=\(tok) CI_PIPELINE=TRUE TYPE=STATIC bundle exec pod install --repo-update")
-    }
 } catch {
     fatalError(error.localizedDescription)
 }
-
 
 func fileModificationDate(path: String) -> Date? {
     do {
