@@ -99,7 +99,7 @@ class ContentViewModel: ObservableObject {
                 if flagshipVersion != scriptsFlagshipVersion {
                     try? shell("rm ./scripts/generator")
                     try? shell("rm ./scripts/generator.version")
-                    try? shell("git clone https://gitlab-ci-token:${CI_JOB_TOKEN}@gitlabci.raiffeisen.ru/mobile_development/ios-kit/ios-flagship.git")
+                    try? shell("git clone https://${FLAGSHIP_GITLAB_API_NAME}:${FLAGSHIP_GITLAB_API_TOKEN}@gitlabci.raiffeisen.ru/mobile_development/ios-kit/ios-flagship.git")
                     try? shell("cp ./ios-flagship/Sources/generator scripts")
                     try? shell("cd ios-flagship && git describe --tags --abbrev=0 > ../scripts/generator.version")
                     try? shell("rm -rf ios-flagship")

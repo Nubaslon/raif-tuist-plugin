@@ -12,7 +12,7 @@ setbuf(__stdoutp, nil)
 do {
     let needsPodInstall = (try? shell("diff Podfile.lock Pods/Manifest.lock")) == nil
     if !FileManager.default.fileExists(atPath: "./scripts/generator") {
-        try? shell("git clone https://gitlab-ci-token:${CI_JOB_TOKEN}@gitlabci.raiffeisen.ru/mobile_development/ios-kit/ios-flagship.git")
+        try? shell("git clone https://${FLAGSHIP_GITLAB_API_NAME}:${FLAGSHIP_GITLAB_API_TOKEN}@gitlabci.raiffeisen.ru/mobile_development/ios-kit/ios-flagship.git")
         try? shell("cp ./ios-flagship/Sources/generator scripts")
         try? shell("rm -rf ios-flagship")
     }
