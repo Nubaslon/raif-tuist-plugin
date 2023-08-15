@@ -11,7 +11,7 @@ import RunShell
 setbuf(__stdoutp, nil)
 do {
     let needsPodInstall = (try? shell("diff Podfile.lock Pods/Manifest.lock")) == nil
-//    let tok = ProcessInfo.processInfo.environment["CI_JOB_TOKEN"]
+    let tok = ProcessInfo.processInfo.environment["CI_JOB_TOKEN"]
 //    if !FileManager.default.fileExists(atPath: "./scripts/generator") {
 //        try? shell("git clone https://gitlab-ci-token:\(tok)@gitlabci.raiffeisen.ru/mobile_development/ios-kit/ios-flagship.git")
 //        try? shell("cp ./ios-flagship/Sources/generator scripts")
@@ -44,7 +44,7 @@ do {
 //    try shell("./scripts/generator -e _Prebuild")
     try shell("tuist generate -n")
     if needsPodInstall {
-        try shell("CI_PIPELINE=TRUE TYPE=STATIC bundle exec pod install --repo-update")
+        try shell("CI_JOB_TOKEN=\(tok) CI_PIPELINE=TRUE TYPE=STATIC bundle exec pod install --repo-update")
     }
 } catch {
     fatalError(error.localizedDescription)
