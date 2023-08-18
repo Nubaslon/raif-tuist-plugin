@@ -26,6 +26,7 @@ do {
             _ = try? shell("CI_PIPELINE=TRUE bundle exec pod repo-art remove cocoapods-art")
             try shell("CI_PIPELINE=TRUE bundle exec pod repo-art add cocoapods-art \"https://artifactory.raiffeisen.ru/artifactory/api/pods/cocoapods\"")
         } else {
+            print("HomeDir - \(homeDirURL.path)")
             let artifactoryUpdateTime = fileModificationDate(path: "\(homeDirURL.path)/.cocoapods/repos-art/cocoapods-art")
             if let artifactoryUpdateTime = artifactoryUpdateTime,
                Date().timeIntervalSince(artifactoryUpdateTime) > 5 * 24 * 60 * 60 {
